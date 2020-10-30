@@ -11,6 +11,8 @@ import Container from '@material-ui/core/Container';
 import LandingPage from "./components/LandingPage";
 import SignUp from './components/SignUp'
 import SignIn from "./components/SignIn";
+import HomePage from './components/HomePage'
+import {Auth} from './components/Auth'
 
 const App = () => {
   return (
@@ -27,6 +29,11 @@ const App = () => {
               </Route>
               <Route path="/sign-in">
                 <SignIn/>
+              </Route>
+              <Route path="/home">
+                <Auth> {/* HOC that renders its children only when user is logged in  */}
+                  <HomePage/>
+                </Auth>
               </Route>
           </Router>
         </Typography>

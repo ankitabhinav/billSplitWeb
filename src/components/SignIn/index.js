@@ -5,7 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
+//import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import {Link, useHistory} from 'react-router-dom'
+
 
 function Copyright() {
     return (
@@ -30,7 +32,7 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
     paper: {
-        marginTop: theme.spacing(8),
+        marginTop: theme.spacing(4),
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -48,13 +50,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
+  let history = useHistory();
+
     const classes = useStyles();
 
     return (
         <>
             <div className="flexRow">
-                <IconButton aria-label="go back">
+                <IconButton onClick={() => history.goBack()} aria-label="go back">
                     <ArrowBackIcon />
                 </IconButton>
             </div>
@@ -103,15 +107,15 @@ export default function SignIn() {
                             className={classes.submit}
                         >
                             Sign In
-          </Button>
+                        </Button>
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">
-                                    Forgot password?
-              </Link>
+                                    Forgot Password?
+                                </Link>
                             </Grid>
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link to="/sign-up" variant="body2">
                                     {"Don't have an account? Sign Up"}
                                 </Link>
                             </Grid>

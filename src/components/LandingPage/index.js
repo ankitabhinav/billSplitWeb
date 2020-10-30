@@ -1,8 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Grid from '@material-ui/core/Grid';
-import { Box, CircularProgress, Typography } from '@material-ui/core';
+import { Box, Button, CircularProgress, Paper, Typography } from '@material-ui/core';
+import Zoom from '@material-ui/core/Zoom';
+import { Auth, NotAuth } from '../Auth'
+import {useHistory} from 'react-router-dom'
 
 const LandingPage = (props) => {
+    let history = useHistory(); 
+    const [checked, setChecked] = useState(false);
     return (
         <div className="flexCol alignCenter justifyCenter" style={{ height: '100vh' }}>
 
@@ -19,12 +24,26 @@ const LandingPage = (props) => {
                     justifyContent="center"
                 >
                     <Typography variant="caption" component="div" color="textSecondary">
-                        <img src="/android-icon-192x192.png" style={{ height: '60px', width: '60px', borderRadius:'50%' }} />
+                        <img src="/android-icon-192x192.png" style={{ height: '60px', width: '60px', borderRadius: '50%' }} />
                     </Typography>
                 </Box>
             </Box>
             <h3>Bill Split</h3>
-           {/*  <img src="/android-icon-192x192.png" style={{ height: '80px', width: '80px' }} /> */}
+
+            <NotAuth> {/* HOC that renders children only when user is not logged in */}
+                <div className="flexRow">
+                    <Zoom in={true}>
+                        <Paper elevation={0}>
+                            <Button onClick={() => history.push('/sign-in')} variant="outlined" color="primary" style={{ margin: '10px' }}>
+                                Sign In
+                            </Button>
+                            <Button onClick={() => history.push('/sign-up')} variant="outlined" color="primary" style={{ margin: '10px' }}>
+                                Sign Up
+                            </Button>
+                        </Paper>
+                    </Zoom>
+                </div>
+            </NotAuth>
         </div>
     )
 }
