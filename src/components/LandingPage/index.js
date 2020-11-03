@@ -1,13 +1,24 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@material-ui/core/Grid';
 import { Box, Button, CircularProgress, Paper, Typography } from '@material-ui/core';
 import Zoom from '@material-ui/core/Zoom';
 import { Auth, NotAuth } from '../Auth'
 import {useHistory} from 'react-router-dom'
+import {checkAuth} from '../Utilities'
 
 const LandingPage = (props) => {
     let history = useHistory(); 
     const [checked, setChecked] = useState(false);
+
+    useEffect(() => {
+        setTimeout(() => {
+            if(checkAuth()) {
+                history.push('/home')
+            }
+        },3000)
+    })
+
+
     return (
         <div className="flexCol alignCenter justifyCenter" style={{ height: '100vh' }}>
 

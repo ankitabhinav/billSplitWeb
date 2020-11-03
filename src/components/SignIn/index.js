@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,6 +15,9 @@ import Container from '@material-ui/core/Container';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Link, useHistory} from 'react-router-dom'
+import {Show} from '../Alert'
+import api from '../Api'
+import { AssignmentReturn } from '@material-ui/icons';
 
 
 function Copyright() {
@@ -51,9 +54,73 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn(props) {
-  let history = useHistory();
-
+    let history = useHistory();
     const classes = useStyles();
+
+    const [spinner, setSpinner] = useState(false);
+    const [email, setEmail] = useState(null);
+    const [password, setPassword] = useState(null);
+
+    const handleEmail = (e) => {
+        setEmail(e.target.value);
+    }
+    const handlePassword = (e) => {
+        setPassword(e.target.value);
+    }
+
+    function ValidateEmail(mail) {
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+            return (true)
+        }
+
+        return (false)
+    }
+
+  
+
+    const handleLogin = async () => {
+        setSpinner(true);
+        console.log('Email :' + email + '  Password:' + password)
+        if (email === null || password === null) {
+            setSpinner(false);
+            return alert('enter email and password to continue');
+        }
+
+        if (!ValidateEmail(email)) {
+            setSpinner(false);
+            return alert("You have entered an invalid email address!");
+        }
+
+        try {
+            let response = await api.post('/login', {
+                email: email,
+                password: password
+            });
+
+            if (response.data.status === 'login successful') {
+                try {
+                    localStorage.setItem('billsplit_user_key', response.data.jwt);
+                    localStorage.setItem('billsplit_user_email', response.data.email);
+                } catch (err) {
+                    console.log(err);
+                }
+                alert('Login Successful')
+                history.push('/home')
+                
+
+            }
+            console.log(response.data);
+
+        }
+        catch (err) {
+            console.log(err.response.data);
+            alert('error'+err.response.data.status)
+
+        }
+
+        setSpinner(false);
+
+    }
 
     return (
         <>
@@ -72,7 +139,7 @@ export default function SignIn(props) {
                     <Typography component="h1" variant="h5">
                         Sign In
                     </Typography>
-                    <form className={classes.form} noValidate>
+                    <div className={classes.form} noValidate>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -83,6 +150,7 @@ export default function SignIn(props) {
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            onChange={handleEmail}
                         />
                         <TextField
                             variant="outlined"
@@ -94,13 +162,14 @@ export default function SignIn(props) {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            onChange={handlePassword}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Remember me"
                         />
                         <Button
-                            type="submit"
+                            onClick={handleLogin}
                             fullWidth
                             variant="contained"
                             color="primary"
@@ -120,7 +189,7 @@ export default function SignIn(props) {
                                 </Link>
                             </Grid>
                         </Grid>
-                    </form>
+                    </div>
                 </div>
                 <Box mt={8}>
                     <Copyright />
