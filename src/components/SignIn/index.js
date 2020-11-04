@@ -18,6 +18,7 @@ import {Link, useHistory} from 'react-router-dom'
 import {Show} from '../Alert'
 import api from '../Api'
 import { AssignmentReturn } from '@material-ui/icons';
+import { CircularProgress } from '@material-ui/core';
 
 
 function Copyright() {
@@ -80,7 +81,7 @@ export default function SignIn(props) {
 
     const handleLogin = async () => {
         setSpinner(true);
-        console.log('Email :' + email + '  Password:' + password)
+        //console.log('Email :' + email + '  Password:' + password)
         if (email === null || password === null) {
             setSpinner(false);
             return alert('enter email and password to continue');
@@ -104,17 +105,17 @@ export default function SignIn(props) {
                 } catch (err) {
                     console.log(err);
                 }
+                setSpinner(false)
                 alert('Login Successful')
                 history.push('/home')
-                
 
             }
-            console.log(response.data);
+            //console.log(response.data);
 
         }
         catch (err) {
-            console.log(err.response.data);
-            alert('error'+err.response.data.status)
+            console.log(err?.response?.data);
+            alert(err?.response?.data?.status)
 
         }
 
@@ -151,6 +152,7 @@ export default function SignIn(props) {
                             autoComplete="email"
                             autoFocus
                             onChange={handleEmail}
+                            disabled={spinner}
                         />
                         <TextField
                             variant="outlined"
@@ -163,12 +165,14 @@ export default function SignIn(props) {
                             id="password"
                             autoComplete="current-password"
                             onChange={handlePassword}
+                            disabled={spinner}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Remember me"
                         />
-                        <Button
+                        <div className="flexRow justifyCenter">
+                       {!spinner && <Button
                             onClick={handleLogin}
                             fullWidth
                             variant="contained"
@@ -176,7 +180,10 @@ export default function SignIn(props) {
                             className={classes.submit}
                         >
                             Sign In
-                        </Button>
+                        </Button> }
+                       {spinner && <CircularProgress style={{height:'25px', width:'25px', alignSelf:'center'}} />}
+                        </div>
+                        
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">
