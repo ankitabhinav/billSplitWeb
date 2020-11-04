@@ -27,20 +27,20 @@ const ListItemComp = (props) => {
     )
 }
 
-const SubtitleComp = ({type, added_by, isSettled}) => {
+const SubtitleComp = ({ type, added_by, isSettled }) => {
     return (
         <div className="flexCol">
             <div className="flexRow">
 
                 {type === 'split' &&
-                    <Chip  size="small" label="splitted equally" style={{marginRight:'5px', backgroundColor:'#ffcc00'}} />
+                    <Chip size="small" label="splitted equally" style={{ marginRight: '5px', backgroundColor: '#ffcc00' }} />
                 }
                 {type === 'lent' &&
-                    <Chip color="primary" size="small" label="lent" style={{marginRight:'5px', backgroundColor:'#ff3300'}} />
+                    <Chip color="primary" size="small" label="lent" style={{ marginRight: '5px', backgroundColor: '#ff3300' }} />
                 }
 
-                <Chip size="small" label={isSettled ? 'settled' : "not settled"} style={{backgroundColor: isSettled ? '#64DD17' : '#ffcc00'}} />  
-               
+                <Chip size="small" label={isSettled ? 'settled' : "not settled"} style={{ backgroundColor: isSettled ? '#64DD17' : '#ffcc00' }} />
+
             </div>
             <span>{`Added By ${added_by}`}</span>
 
@@ -96,7 +96,7 @@ export default function SimpleTabs(props) {
 
     useEffect(() => {
         calculateSummary();
-    },[])
+    }, [])
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -117,7 +117,7 @@ export default function SimpleTabs(props) {
             }
 
         } catch (err) {
-           return console.log(err.response.data);
+            return console.log(err.response.data);
         }
     }
 
@@ -147,12 +147,12 @@ export default function SimpleTabs(props) {
                 })}
             </TabPanel>
             <TabPanel value={value} index={2}>
-            {summary?.map((item, i) => {
+                {summary?.map((item, i) => {
                     return <ListItemComp title={item.item}
-                        subtitle={<Chip size="small" label={item.isSettled ? 'settled' : 'not settled'} style={{marginRight:'5px', backgroundColor:item.isSettled ? '#64DD17' : '#ff3300'}} />}
+                        subtitle={<Chip size="small" label={item.isSettled ? 'settled' : 'not settled'} style={{ marginRight: '5px', backgroundColor: item.isSettled ? '#64DD17' : '#ff3300' }} />}
                     />
                 })}
-      </TabPanel>
+            </TabPanel>
         </div>
     );
 }

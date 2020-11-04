@@ -18,7 +18,7 @@ const App = () => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container maxWidth="md">
+      <Container maxWidth="md" style={{padding:'0px'}}>
         <Typography component="div" style={{ /* backgroundColor: '#fff',  */height: '100vh' }}>
           <Router>
               <Route exact path="/">

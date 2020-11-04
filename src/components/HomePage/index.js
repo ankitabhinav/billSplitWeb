@@ -12,6 +12,7 @@ import AddIcon from '@material-ui/icons/Add';
 import AddGroup from './AddGroup'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ViewGroup from './ViewGroup'
+import Menu from './Menu'
 
 const CompanyLogo = () => {
     return (
@@ -93,8 +94,8 @@ const HomePage = (props) => {
                 setBackUp(response.data.groups)
                 setSpinner(false);
                 setRefreshing(false);
-               // console.log(response.data.groups);
-                return 
+                // console.log(response.data.groups);
+                return
             } else {
                 setSpinner(false);
                 setRefreshing(false);
@@ -107,20 +108,20 @@ const HomePage = (props) => {
             return console.log(err.response.data.status)
         }
 
-
     }
-
-
 
     return (
         <>
             <div>
                 {modalState && <AddGroup onClose={() => setModalState(false)} refresh={handleRefresh} />}
                 <div className="flexCol justifyCenter" style={{ height: '120px', backgroundColor: '#2196f3' }}>
-                    <div className="flexRow">
-                       {showTabs && <IconButton onClick={() => setShowTabs(false)} aria-label="go back">
-                            <ArrowBackIcon style={{color:'#fff'}} />
-                        </IconButton>}
+                    <div className="flexRow justifyBetween">
+                       
+                            <IconButton onClick={() => setShowTabs(false)} aria-label="go back" disabled={showTabs ? false : true}>
+                                <ArrowBackIcon style={{ color: showTabs ? '#fff' : 'grey' }} />
+                            </IconButton>
+                       
+                        <Menu />
                     </div>
                     <CompanyLogo />
                     <span style={{ alignSelf: 'center', fontSize: '15px', color: 'white' }}>{localStorage.getItem('billsplit_user_email')}</span>
