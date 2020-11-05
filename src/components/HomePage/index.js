@@ -84,6 +84,11 @@ const HomePage = (props) => {
         setShowTabs(true);
     }
 
+    const handleGoBack = () => {
+        setShowTabs(false);
+        setCurrentGroup(null);
+    }
+
 
     const getGroups = async () => {
         console.log('fetch called')
@@ -117,11 +122,11 @@ const HomePage = (props) => {
                 <div className="flexCol justifyCenter" style={{ height: '120px', backgroundColor: '#2196f3' }}>
                     <div className="flexRow justifyBetween">
                        
-                            <IconButton onClick={() => setShowTabs(false)} aria-label="go back" disabled={showTabs ? false : true}>
+                            <IconButton onClick={handleGoBack} aria-label="go back" disabled={showTabs ? false : true}>
                                 <ArrowBackIcon style={{ color: showTabs ? '#fff' : 'grey' }} />
                             </IconButton>
                        
-                        <Menu />
+                        <Menu group_id={currentGroup?._id} onReload={() =>{ getGroups(); setShowTabs(false)}} />
                     </div>
                     <CompanyLogo />
                     <span style={{ alignSelf: 'center', fontSize: '15px', color: 'white' }}>{localStorage.getItem('billsplit_user_email')}</span>
