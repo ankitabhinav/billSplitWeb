@@ -28,6 +28,10 @@ justify-content: space-around;
   justify-content: flex-end;
   }
 
+.justifyEvenly {
+  justify-content: space-evenly;
+}  
+
 .justifyBetween {
 justify-content: space-between;
 }
