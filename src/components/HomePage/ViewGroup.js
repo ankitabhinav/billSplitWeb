@@ -6,12 +6,18 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import { Chip, Divider, Fab, ListItem, ListItemIcon, ListItemText, Paper, Zoom } from '@material-ui/core';
+import { Chip, Divider, Fab, IconButton, ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Paper, Zoom } from '@material-ui/core';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 import api from '../Api'
 import AddIcon from '@material-ui/icons/Add';
 import AddBill from './AddBill'
 import ViewBill from './ViewBill';
+import AddMember from './AddMember'
+import ConfirmDeleteMember from './ConfirmDeleteMember'
+
+import DeleteIcon from '@material-ui/icons/Delete';
+
+
 
 
 const ListItemComp = (props) => {
@@ -24,6 +30,11 @@ const ListItemComp = (props) => {
                     </ListItemIcon>
                     <ListItemText primary={props.title}
                         secondary={props.subtitle} />
+                    {props.delete && <ListItemSecondaryAction>
+                        <IconButton edge="end" aria-label="delete" onClick={() => props.setMember(props.title)}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </ListItemSecondaryAction>}
                 </ListItem>
                 <Divider />
             </Paper>
@@ -100,12 +111,17 @@ export default function SimpleTabs(props) {
     const [showAddBill, setShowAddBill] = useState(false);
     const [showViewBill, setShowViewBill] = useState(false);
     const [currentBill, setCurrentBill] = useState(null);
+    const [currentMember, setCurrentMember] = useState(null)
 
     const [viewBillModalState, setViewBillModalState] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [spinner, setSpinner] = useState(false);
     const [transactionsState, setTransactionsState] = useState(props.group.transactions)
+    const [membersState, setMembersState] = useState(props.group.members)
     const [viewBillDetail, setViewBillDetail] = useState(null)
+    const [showAddMember, setShowAddMember] = useState(false);
+    const [showDeleteMember , setShowDeleteMember] = useState(false);
+
 
     useEffect(() => {
         calculateSummary();
@@ -125,7 +141,7 @@ export default function SimpleTabs(props) {
 
         try {
             let response = await api.get('groups/transaction?group_id=' + props.group._id);
-           // console.log(response.data);
+            // console.log(response.data);
             if (response.data.success === true) {
                 setTransactionsState(response.data.data)
                 setSpinner(false);
@@ -147,9 +163,41 @@ export default function SimpleTabs(props) {
 
     }
 
+    const getMembers = async () => {
+        console.log('fetch members called')
+        try {
+            let response = await api.get('groups/member?group_id=' + props.group._id);
+
+            if (response.data.success === true) {
+                setMembersState(response.data.data)
+                setSpinner(false);
+                setRefreshing(false);
+                return
+
+            } else {
+                setSpinner(false);
+                setRefreshing(false);
+                return console.log(response.data.status)
+            }
+        }
+        catch (err) {
+            setSpinner(false);
+            setRefreshing(false);
+            return console.log(err.response.data.status)
+        }
+
+
+    }
+
+
+
     const onRefresh = () => {
         setRefreshing(true);
         getTransactions();
+    }
+
+    const onRefreshMembers = () => {
+        getMembers();
     }
 
     const calculateSummary = async () => {
@@ -175,9 +223,10 @@ export default function SimpleTabs(props) {
 
     return (
         <div className={classes.root}>
-           {showAddBill && <AddBill onClose={() => setShowAddBill(false) } onRefresh={()=>onRefresh()} group_id={props.group._id} members={props.group.members}/>}
-           {showViewBill && <ViewBill onClose={() => {setShowViewBill(false); setCurrentBill(null)} } onRefresh={()=>onRefresh()} bill={currentBill} group_id={props.group._id} members={props.group.members}/>}
-
+            {showAddBill && <AddBill onClose={() => setShowAddBill(false)} onRefresh={() => onRefresh()} group_id={props.group._id} members={props.group.members} />}
+            {showViewBill && <ViewBill onClose={() => { setShowViewBill(false); setCurrentBill(null) }} onRefresh={() => onRefresh()} bill={currentBill} group_id={props.group._id} members={props.group.members} />}
+            {showAddMember && <AddMember onClose={() => { setShowAddMember(false) }} onRefresh={() => onRefreshMembers()} bill={currentBill} group_id={props.group._id} members={props.group.members} />}
+            {showDeleteMember && <ConfirmDeleteMember onClose={() => {setShowDeleteMember(false); setCurrentMember(null)} } onRefresh={() => onRefreshMembers()} group_id={props.group._id} memberEmail={currentMember} />}
             <Tabs value={value} onChange={handleChange} aria-label="simple tabs example" centered>
                 <Tab label="Bills" {...a11yProps(0)} />
                 <Tab label="Members" {...a11yProps(1)} />
@@ -199,17 +248,24 @@ export default function SimpleTabs(props) {
                 </div>
             </TabPanel>
             <TabPanel value={value} index={1}>
-                {props.group.members.map((item, i) => {
-                    return <ListItemComp 
+                {membersState?.map((item, i) => {
+                    return <ListItemComp
                         key={i}
-                        title={item.email.split('@')[0]}
+                        title={item.email}
+                        delete
                         subtitle={item.email === props.group.created_by ? 'Admin' : 'Member'}
+                        setMember={(email) => {setCurrentMember(email); setShowDeleteMember(true)}}
                     />
                 })}
+                <div className="flexRow justifyEnd">
+                    <Fab color="secondary" aria-label="add" onClick={() => setShowAddMember(true)}>
+                        <AddIcon />
+                    </Fab>
+                </div>
             </TabPanel>
             <TabPanel value={value} index={2}>
                 {summary?.map((item, i) => {
-                    return <ListItemComp 
+                    return <ListItemComp
                         key={i}
                         title={item.item}
                         subtitle={<Chip size="small" label={item.isSettled ? 'settled' : 'not settled'} style={{ marginRight: '5px', backgroundColor: item.isSettled ? '#64DD17' : '#ff3300' }} />}
