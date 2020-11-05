@@ -194,10 +194,12 @@ export default function SimpleTabs(props) {
     const onRefresh = () => {
         setRefreshing(true);
         getTransactions();
+        calculateSummary();
     }
 
     const onRefreshMembers = () => {
         getMembers();
+        //calculateSummary();
     }
 
     const calculateSummary = async () => {
